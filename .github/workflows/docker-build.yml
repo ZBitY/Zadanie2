@@ -54,7 +54,7 @@ jobs:
         outputs: type=docker
 
     - name: Scan image for CVEs (trivy)
-      uses: aquasecurity/trivy-action@v0.17.0
+      uses: aquasecurity/trivy-action@v0.19.0
       with:
         image-ref: ${{ env.IMAGE_NAME }}:${{ env.TAG }}
         severity: CRITICAL,HIGH
