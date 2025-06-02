@@ -6,7 +6,7 @@ on:
 
 env:
   IMAGE_NAME: ghcr.io/ZBitY/Zadanie2
-  CACHE_IMAGE: przemekzbiciak/weather-cache
+  CACHE_IMAGE: pszmeke/weather-cache
   TAG: latest
 
 jobs:
