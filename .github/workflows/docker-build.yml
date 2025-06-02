@@ -1,4 +1,4 @@
-name: Build and Push Multi-Arch Docker Image
+name: Build, Scan and Push Multi-Arch Docker Image
 
 on:
   push:
@@ -10,7 +10,7 @@ env:
   TAG: latest
 
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -40,39 +40,30 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Log in to GitHub Container Registry
-      uses: docker/login-action@v3
+    - name: Build Docker image (amd64 only, for scanning)
+      uses: docker/build-push-action@v5
       with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        context: .
+        platforms: linux/amd64
+        load: true
+        tags: localbuild:${{ env.TAG }}
+        cache-from: type=registry,ref=${{ env.CACHE_IMAGE }}:cache
+        cache-to: type=registry,ref=${{ env.CACHE_IMAGE }}:cache,mode=max
 
+    - name: Scan image for CVEs (Trivy)
+      uses: aquasecurity/trivy-action@0.30.0
+      with:
+        image-ref: localbuild:${{ env.TAG }}
+        severity: CRITICAL,HIGH
+        exit-code: 1
 
-    - name: Build and push Docker image
+    - name: Build and push multi-arch image
+      if: success()
       uses: docker/build-push-action@v5
       with:
         context: .
         platforms: linux/amd64,linux/arm64
         push: true
         tags: ${{ env.IMAGE_NAME }}:${{ env.TAG }}
-        cache-from: type=registry,ref=${{ env.CACHE_IMAGE }}:cache
-        cache-to: type=registry,ref=${{ env.CACHE_IMAGE }}:cache,mode=max
-        
-    - name: Scan image for CVEs (trivy)
-      uses: aquasecurity/trivy-action@0.30.0
-      with:
-        image-ref: ${{ env.IMAGE_NAME }}:${{ env.TAG }}
-        severity: CRITICAL,HIGH
-        exit-code: 1
-
-    - name: Push image to GHCR (only if scan passed)
-      if: success()
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        push: true
-        platforms: linux/amd64,linux/arm64
-        tags: |
-          ${{ env.IMAGE_NAME }}:${{ env.TAG }}
         cache-from: type=registry,ref=${{ env.CACHE_IMAGE }}:cache
         cache-to: type=registry,ref=${{ env.CACHE_IMAGE }}:cache,mode=max
