@@ -5,7 +5,7 @@ on:
     branches: [main]
 
 env:
-  IMAGE_NAME: ghcr.io/zbity/zadanie2
+  IMAGE_NAME: ghcr.io/ZBitY/Zadanie2
   CACHE_IMAGE: przemekzbiciak/weather-cache
   TAG: latest
 
