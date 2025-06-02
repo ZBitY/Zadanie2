@@ -41,16 +41,15 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
     - name: Build and push Docker image
-  uses: docker/build-push-action@v5
-  with:
-    context: .
-    platforms: linux/amd64,linux/arm64
-    push: true
-    tags: ${{ env.IMAGE_NAME }}:${{ env.TAG }}
-    cache-from: type=registry,ref=${{ env.CACHE_IMAGE }}:cache
-    cache-to: type=registry,ref=${{ env.CACHE_IMAGE }}:cache,mode=max
-
-
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        platforms: linux/amd64,linux/arm64
+        push: true
+        tags: ${{ env.IMAGE_NAME }}:${{ env.TAG }}
+        cache-from: type=registry,ref=${{ env.CACHE_IMAGE }}:cache
+        cache-to: type=registry,ref=${{ env.CACHE_IMAGE }}:cache,mode=max
+        
     - name: Scan image for CVEs (trivy)
       uses: aquasecurity/trivy-action@0.30.0
       with:
