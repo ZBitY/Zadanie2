@@ -18,6 +18,8 @@ jobs:
       security-events: write
 
     steps:
+      - name: Debug whoami
+        run: echo ${{ github.actor }}
       - name: Checkout code
         uses: actions/checkout@v4
 
