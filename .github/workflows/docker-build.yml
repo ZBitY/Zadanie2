@@ -52,7 +52,7 @@ jobs:
           cache-to: type=registry,ref=${{ env.CACHE_NAME }}:cache,mode=max
 
       - name: Scan image for vulnerabilities using Trivy
-        uses: aquasecurity/trivy-action@v0.14.0
+        uses: aquasecurity/trivy-action@0.14.0
         with:
           image-ref: weather-app:temp
           format: table
