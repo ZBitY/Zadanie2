@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/weather-app
+  IMAGE_NAME: ghcr.io/zbity/weather-app
   CACHE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/weather-app-cache
 
 jobs:
